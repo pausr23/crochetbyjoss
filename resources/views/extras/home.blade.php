@@ -20,44 +20,93 @@
         <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black rounded-b-[10%]"></div>
     </div>
 
-    <nav class="relative top-0 left-0 w-full py-6 z-50">
+    <nav class="relative w-full z-50 mt-5">
         <div class="container mx-auto flex justify-between items-center px-8 font-dm-sans">
-            <!-- Logo del sitio -->
-            <div class="text-white text-xl font-bold tracking-wide">
+            <!-- Logo del sitio (oculto en móvil) -->
+            <div class="text-white text-xl font-bold tracking-wide hidden lg:block">
                 Crochet By Joss
             </div>
-            <!-- Menú -->
-            <ul class="flex space-x-8 text-white text-base font-medium tracking-wider">
-                <li><a href="#inicio" class="hover:text-yellow-400 transition duration-300">Inicio</a></li>
-                <li><a href="#categorias" class="hover:text-yellow-400 transition duration-300">Categorías</a></li>
-                <li><a href="#sobre-nosotros" class="hover:text-yellow-400 transition duration-300">Sobre Nosotros</a></li>
-                <li><a href="#cuidados" class="hover:text-yellow-400 transition duration-300">Cuidados</a></li>
+
+            <!-- Menú principal -->
+            <ul
+                id="mobile-menu"
+                class="hidden fixed top-0 left-0 h-full w-2/3 bg-gray-800 text-white text-base font-medium tracking-wider shadow-lg lg:relative lg:flex lg:w-auto lg:bg-transparent lg:shadow-none lg:space-x-8 lg:top-auto lg:left-auto lg:h-auto"
+            >
+                <!-- Botón de cerrar (visible solo en móvil) -->
+                <li class="block px-8 py-4 lg:hidden">
+                    <button
+                        id="menu-close"
+                        class="text-white focus:outline-none"
+                        aria-label="Cerrar menú"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </li>
+
+                <li><a href="#inicio" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Inicio</a></li>
+                <li><a href="#categorias" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Categorías</a></li>
+                <li><a href="#sobre-nosotros" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Sobre Nosotros</a></li>
+                <li><a href="#cuidados" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Cuidados</a></li>
                 @guest
-                    <li><a href="#pedidos" class="hover:text-yellow-400 transition duration-300">Pedidos</a></li>
+                    <li><a href="#pedidos" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Pedidos</a></li>
                 @endguest
-                <!-- Nuevo botón para ver órdenes -->
                 @auth
-                    <li><a href="{{ route('orders.index') }}" class="hover:text-yellow-400 transition duration-300">Ver Órdenes</a></li>
+                    <li><a href="{{ route('orders.index') }}" class="block px-8 py-4 lg:p-0 hover:text-yellow-400 transition duration-300">Ver Órdenes</a></li>
                 @endauth
 
+                <!-- Botones de sesión -->
+                <li class="block px-8 py-4 lg:p-0 lg:inline-block">
+                    @guest
+                        <a href="{{ route('login') }}" class="px-4 py-2 bg-yellow-400 text-black font-medium text-sm rounded-md shadow-md hover:bg-yellow-300 transition duration-300">
+                            Iniciar Sesión
+                        </a>
+                    @else
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 bg-red-400 text-white font-medium text-sm rounded-md shadow-md hover:bg-red-300 transition duration-300">
+                                Cerrar Sesión
+                            </button>
+                        </form>
+                    @endguest
+                </li>
             </ul>
-            <!-- Botón de inicio de sesión -->
-            <div>
-                @guest
-                    <a href="{{ route('login') }}" class="px-4 py-2 bg-yellow-400 text-black font-medium text-sm rounded-md shadow-md hover:bg-yellow-300 transition duration-300">
-                        Iniciar Sesión
-                    </a>
-                @else
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="px-4 py-2 bg-red-400 text-white font-medium text-sm rounded-md shadow-md hover:bg-red-300 transition duration-300">
-                            Cerrar Sesión
-                        </button>
-                    </form>
-                @endguest
-            </div>
+
+            <!-- Botón hamburguesa (visible solo en móvil, al lado izquierdo) -->
+            <button
+                id="menu-toggle"
+                class="text-white lg:hidden absolute top-6 left-8 z-50"
+                aria-label="Abrir menú"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" id="hamburger-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
         </div>
     </nav>
+
+    <script>
+        // Referencias a elementos
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        // Abrir menú
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+            hamburgerIcon.classList.add('hidden'); // Oculta las rayas
+        });
+
+        // Cerrar menú
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            hamburgerIcon.classList.remove('hidden'); // Muestra las rayas nuevamente
+        });
+    </script>
+
+
 
     <!-- Contenido del header -->
     <div  id="inicio" class="absolute inset-0 flex flex-col items-center justify-center text-center z-20 text-white space-y-6">
@@ -171,23 +220,28 @@
     </div>
 </section>
 
+
+
+
 <section id="cuidados" class="py-20 bg-gray-100">
-    <div class="container mx-auto px-8 text-center">
-        <h2 class="text-4xl font-bold text-yellow-400 mb-6">Cuidados y Cómo Lavar Tu Amigurumi</h2>
-        <p class="text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
+    <div class="container mx-auto px-6 md:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-yellow-400 mb-6">Cuidados y Cómo Lavar Tu Amigurumi</h2>
+        <p class="text-base md:text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
             Los amigurumis son creaciones delicadas que requieren de cuidados especiales para
             mantenerse en su mejor estado. Aunque son piezas resistentes, es importante seguir
             algunos consejos para asegurar su durabilidad y limpieza. Aquí te dejamos algunos
             consejos sobre cómo cuidar y lavar tu amigurumi de manera adecuada.
         </p>
-        <div class="flex flex-col md:flex-row justify-center items-center space-x-12 space-y-8 md:space-y-0">
+        <!-- Primer bloque: Lavado a mano -->
+        <div class="flex flex-col items-center justify-center space-y-8 md:flex-row md:space-y-0 md:space-x-12 mt-8">
             <!-- Imagen de lavado a mano -->
             <div class="w-64 h-64 rounded-lg bg-white p-6 shadow-lg flex items-center justify-center">
                 <img src="https://i.ibb.co/DL6XCVB/Whats-App-Image-2024-12-02-at-11-09-22-PM.jpg" alt="Lavado a mano" class="max-w-[80%] rounded-lg shadow-md">
             </div>
+            <!-- Descripción de lavado a mano -->
             <div class="w-full md:w-2/3">
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Lavado a Mano</h3>
-                <p class="text-base text-gray-600 mb-6">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Lavado a Mano</h3>
+                <p class="text-sm md:text-base text-gray-600 mb-6">
                     La mejor manera de lavar tu amigurumi es a mano. Utiliza agua tibia y un jabón suave,
                     asegurándote de frotar suavemente para no dañar las fibras. Evita los detergentes fuertes
                     o abrasivos que puedan dañar el material o descolorear el amigurumi.
@@ -199,14 +253,16 @@
                 </ul>
             </div>
         </div>
-        <div class="flex flex-col md:flex-row justify-center items-center space-x-12 space-y-8 md:space-y-0 mt-16">
+        <!-- Segundo bloque: Secado y Mantenimiento -->
+        <div class="flex flex-col items-center justify-center space-y-8 md:flex-row md:space-y-0 md:space-x-12 mt-16">
             <!-- Imagen de secado -->
             <div class="w-64 h-64 rounded-lg bg-white p-6 shadow-lg flex items-center justify-center">
                 <img src="https://i.ibb.co/G0WH5yt/Whats-App-Image-2024-12-02-at-11-32-45-PM.jpg" alt="Secado" class="max-w-[80%] rounded-lg shadow-md">
             </div>
+            <!-- Descripción de secado -->
             <div class="w-full md:w-2/3">
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Secado y Mantenimiento</h3>
-                <p class="text-base text-gray-600 mb-6">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Secado y Mantenimiento</h3>
+                <p class="text-sm md:text-base text-gray-600 mb-6">
                     Una vez lavado, es esencial secar tu amigurumi de manera adecuada. Nunca lo pongas
                     en la secadora, ya que esto podría deformar la figura. Es recomendable dejarlo secar al aire
                     en un lugar cálido, pero sin exponerlo directamente al sol para evitar que los colores se desvanezcan.
@@ -220,6 +276,12 @@
         </div>
     </div>
 </section>
+
+
+
+
+
+
 
 <section id="pedidos" class="py-20 bg-gray-50">
     <div class="container mx-auto text-center">

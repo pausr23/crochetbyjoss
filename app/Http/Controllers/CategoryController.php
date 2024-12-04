@@ -46,14 +46,18 @@ class CategoryController extends Controller
 
         // Si se subió un nuevo logo, manejar la subida
         if ($request->hasFile('logo')) {
-            // Opcional: Borrar el logo anterior si existe
-            if ($category->logo && \File::exists(public_path($category->logo))) {
-                \File::delete(public_path($category->logo));
+            // Opcional: Manejar la eliminación del logo anterior (debes guardar el `public_id` de la imagen al subirla)
+            if ($category->logo) {
+                $publicId = pathinfo($category->logo, PATHINFO_FILENAME); // Obtén el ID público de la imagen anterior
+                \Cloudinary::destroy("categories/{$publicId}"); // Elimina la imagen anterior
             }
 
-            // Guardar el nuevo logo
-            $logoPath = $request->file('logo')->store('categories', 'public');
-            $category->logo = 'storage/' . $logoPath;
+            // Subir el nuevo logo a Cloudinary
+            $logo = $request->file('logo');
+            $uploadedLogo = \Cloudinary::upload($logo->getRealPath(), [
+                'folder' => 'categories'
+            ]);
+            $category->logo = $uploadedLogo->getSecurePath(); // URL segura del nuevo logo
         }
 
         // Guardar los cambios en la base de datos
@@ -62,6 +66,7 @@ class CategoryController extends Controller
         // Redirigir a la lista de categorías con un mensaje de éxito
         return redirect()->route('categories.index')->with('success', 'Categoría actualizada exitosamente.');
     }
+
 
     public function store(Request $request)
     {
@@ -77,8 +82,11 @@ class CategoryController extends Controller
 
         // Manejar la subida del logo si existe
         if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('categories', 'public');
-            $category->logo = 'storage/' . $logoPath;
+            $logo = $request->file('logo');
+            $uploadedLogo = \Cloudinary::upload($logo->getRealPath(), [
+                'folder' => 'categories'
+            ]);
+            $category->logo = $uploadedLogo->getSecurePath(); // URL segura de la imagen en Cloudinary
         }
 
         // Guardar la categoría en la base de datos
@@ -87,6 +95,7 @@ class CategoryController extends Controller
         // Redirigir con un mensaje de éxito
         return redirect()->route('categories.index')->with('success', 'Categoría creada exitosamente.');
     }
+
 
     public function create()
     {

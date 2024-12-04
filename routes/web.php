@@ -21,10 +21,16 @@ Route::get('/pedido', function () {
 
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
-
-
 // Rutas protegidas por autenticación (middleware auth)
 Route::middleware('auth')->group(function () {
+
+    Route::get('amigurumis/{id}/edit', [AmigurumiController::class, 'edit'])->name('amigurumis.edit');
+    Route::put('amigurumis/{id}', [AmigurumiController::class, 'update'])->name('amigurumis.update');
+    Route::delete('/amigurumis/{id}', [AmigurumiController::class, 'destroy'])->name('amigurumis.destroy');
+    Route::get('/amigurumi/{id}', [AmigurumiController::class, 'show'])->name('amigurumi.show');
+
+
+
 
     // Ruta para ver las órdenes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

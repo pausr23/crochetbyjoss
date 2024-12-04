@@ -23,11 +23,6 @@
             </div>
 
             <div class="mb-6">
-                <label for="price" class="block text-lg font-semibold text-gray-700">Precio</label>
-                <input type="number" id="price" name="price" step="0.01" class="mt-2 w-full p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300" required>
-            </div>
-
-            <div class="mb-6">
                 <label for="image" class="block text-lg font-semibold text-gray-700">Imagen</label>
                 <input type="file" id="image" name="image" class="mt-2 w-full p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300">
             </div>
